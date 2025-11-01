@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: weather-app
+  profiles:
+    active: local
+server:
+  port: ${SERVER_PORT:8081}
+  servlet:
+    context-path: ${CONTEXT_PATH:/weather-api}
+
