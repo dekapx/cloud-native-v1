@@ -17,7 +17,7 @@ public class SensorController {
     @Operation(summary = "Weather API Info")
     @GetMapping(INFO_URL)
     public String getInfo() {
-        log.info("Weather API v1.0");
+        log.info("Getting Weather API Info");
         return "Weather API v1.0";
     }
 
