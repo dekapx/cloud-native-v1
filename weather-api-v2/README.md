@@ -4,42 +4,44 @@
 - http://localhost:8081/weather-api/swagger-ui.html
 
 ```bash
-$ docker build -t weather-api .
-$ docker run -d -p 8081:8081 --name weather-api weather-api
-$ docker tag weather-api dekapx/weather-api:latest
-$ docker push dekapx/weather-api:latest
-# enable connection with postgres from weather-api in docker-compose
-$ docker compose -f deploy/docker-compose-postgres.yaml up -d
+# build docker image  
+$ docker build -t dekapx/weather-api .
 
-$ kubectl apply -f deploy/weather-api-service.yaml
+# tag the image 
+$ docker tag dekapx/weather-api dekapx/weather-api:1.0
+
+# run docker container 
+$ docker run -d -p 8081:8081 --name weather-api dekapx/weather-api
+
+# push the tagged image on docker hub
+$ docker push dekapx/weather-api:1.0
+
+# deploy to minikube
+$ kubectl apply -f deploy/weather-service.yaml
 
 # enable connection with postgres from weather-api
 $ kubectl apply -f deploy/postgres-deployment.yaml
-# check the service is running
 
-
+# check the IP
 $ minikube ip
+
+# check the service
 $ kubectl get svc weather-api-service
-$ kubectl get services 
+
+# access the service
+$ kubectl get services
+
+# Command to access the service URL from minikube
 $ minikube service weather-api-service 
-  - the output contains the URL to access the service
+
+# find the pod name for weather-api
 $ kubectl get pods
-  - find the pod name for weather-api
-$ kubectl logs <pod-name>
-  - view the logs for the weather-api pod
-```
 
-```bash
-kubectl apply -f postgres-deployment.yaml
-kubectl apply -f demo-app-deployment.yaml
-```
+# tail the logs for the weather-api pod
+$ kubectl logs -f <pod-name>
 
-```bash
 # Enable docker inside minikube
 eval $(minikube docker-env)
-
-# Build the Docker image inside Minikube
-docker build -t demo-app:1.0 .
 ```
 
 ```yaml demo-app-deployment.yaml 
