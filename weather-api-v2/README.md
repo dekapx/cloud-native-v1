@@ -4,6 +4,22 @@
 - http://localhost:8081/weather-api/swagger-ui.html
 
 ```bash
+# create a volume for postgres data persistence
+$ docker volume create pgdata
+
+# run local postgres container in docker
+$ docker container run \
+    --name docker-postgres -p 5432:5432 \
+    -e POSTGRES_USER=dekapx -e POSTGRES_PASSWORD=passw0rd \
+    -e POSTGRES_DB=testdb -v pgdata:/var/lib/postgresql/data postgres:16
+```
+
+```bash
+$ docker compose -f deploy/postgres-service.yml up -d
+$ docker compose -f deploy/postgres-service.yml down
+```
+
+```bash
 # build docker image  
 $ docker build -t dekapx/weather-api .
 
@@ -44,91 +60,3 @@ $ kubectl logs -f <pod-name>
 eval $(minikube docker-env)
 ```
 
-```yaml demo-app-deployment.yaml 
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: demo-app
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: demo-app
-  template:
-    metadata:
-      labels:
-        app: demo-app
-    spec:
-      containers:
-      - name: demo-app
-        image: demo-app:1.0
-        imagePullPolicy: Never  # Important for Minikube local images
-        ports:
-        - containerPort: 8080
-        env:
-        - name: SPRING_DATASOURCE_URL
-          value: jdbc:postgresql://postgres:5432/demo_db
-        - name: SPRING_DATASOURCE_USERNAME
-          value: demo_user
-        - name: SPRING_DATASOURCE_PASSWORD
-          value: demo_pass
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: demo-app
-spec:
-  type: NodePort
-  selector:
-    app: demo-app
-  ports:
-  - port: 8080
-    targetPort: 8080
-    nodePort: 30080
-```
-
-```yaml postgres-deployment.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: postgres
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: postgres
-  template:
-    metadata:
-      labels:
-        app: postgres
-    spec:
-      containers:
-      - name: postgres
-        image: postgres:15
-        env:
-        - name: POSTGRES_DB
-          value: demo_db
-        - name: POSTGRES_USER
-          value: demo_user
-        - name: POSTGRES_PASSWORD
-          value: demo_pass
-        ports:
-        - containerPort: 5432
-        volumeMounts:
-        - name: postgres-storage
-          mountPath: /var/lib/postgresql/data
-      volumes:
-      - name: postgres-storage
-        emptyDir: {}
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: postgres
-spec:
-  selector:
-    app: postgres
-  ports:
-  - port: 5432
-    targetPort: 5432
-```

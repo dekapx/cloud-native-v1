@@ -4,7 +4,7 @@ spring:
   profiles:
     active: local
   datasource:
-    username: ${POSTGRES_USERNAME:postgres}
+    username: ${POSTGRES_USERNAME:dekapx}
     password: ${POSTGRES_PASSWORD:passw0rd}
     url: jdbc:postgresql://localhost:5432/postgres
   jpa:
