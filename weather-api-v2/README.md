@@ -12,5 +12,55 @@ $ docker compose up --build
 ```bash
 # Enable docker inside minikube
 eval $(minikube docker-env)
+
+# Build docker image inside minikube
+$ docker build -t weather-api:1.0 .
+
+# Verify the image is created
+$ docker images | grep weather-api
+
+# Apply the kubernetes deployment and service
+$ kubectl apply -f deploy/
+
+# Verify the pods are running
+$ kubectl get pods
+
+# Access the service
+$ minikube service weather-api-service
 ```
 
+```yaml
+# weather-service.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weather-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: weather-api
+  template:
+    metadata:
+      labels:
+        app: weather-api
+    spec:
+      containers:
+        - name: weather-api
+          image: dekapx/weather-api:1.0
+          ports:
+            - containerPort: 8081
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: weather-api-service
+spec:
+  selector:
+    app: weather-api
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8081
+  type: NodePort
+```

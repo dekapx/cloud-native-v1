@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weather-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: weather-api
+  template:
+    metadata:
+      labels:
+        app: weather-api
+    spec:
+      containers:
+        - name: weather-api
+          image: weather-api:1.0
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8081
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://postgres:5432/testdb
+            - name: SPRING_DATASOURCE_USERNAME
+              value: dekapx
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: passw0rd
+            - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+              value: update
