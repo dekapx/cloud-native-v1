@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: weather-api
-          image: weather-api:1.0
+          image: dekapx/weather-api:1.0
           imagePullPolicy: Never
           ports:
             - containerPort: 8081

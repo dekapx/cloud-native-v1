@@ -5,16 +5,32 @@
 
 
 ```bash
-# deploy application using docker compose
+# deploy application using docker compose [docker-compose.yml]
 $ docker compose up --build
 ```
 
 ```bash
+# build docker image  
+$ docker build -t dekapx/weather-api .
+
+# tag the image 
+$ docker tag dekapx/weather-api dekapx/weather-api:1.0
+
+# run docker container 
+$ docker run -d -p 8081:8081 --name weather-api dekapx/weather-api
+
+# push the tagged image on docker hub
+$ docker push dekapx/weather-api:1.0
+```
+
+```bash
 # Enable docker inside minikube
-eval $(minikube docker-env)
+$ eval $(minikube docker-env)
 
 # Build docker image inside minikube
-$ docker build -t weather-api:1.0 .
+$ docker build -t weather-api:latest .
+
+$ docker push weather-api:latest
 
 # Verify the image is created
 $ docker images | grep weather-api
